@@ -35,7 +35,6 @@ class Car(threading.Thread):
             
         self.car_image=pygame.image.load(self.car_image_file)
         
-        #self.car_rect=self.car_image.get_rect()
     
     def print_car(self):
         #print("Id: " + str(self.Id) + "State: " + str(self.state) + "Direction: " + str(self.car_direction))
@@ -58,8 +57,8 @@ class Car(threading.Thread):
                 self.waiting_state()
             
             elif(self.state == State.CROSSING):
-                self.crossing_state()
-                        
+                self.crossing_state()  
+    
     def test_collision(self):
         
         for car in Bridge_Handler.Bridge_Handler.bridge_handler().list_of_cars:
@@ -140,6 +139,7 @@ class Car(threading.Thread):
         self.time_crossing = 0.0 
         self.now_time = 0.0
         self.before_time = time.time()
+        
             
             
     def parked_state(self):

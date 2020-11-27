@@ -8,9 +8,10 @@ from Bridge_Handler import *
 class Screen(threading.Thread):
     def __init__(self):
         super(Screen,self).__init__()
+        self.screen = pygame.display.set_mode((1079,650))
         self.background = pygame.image.load('bridge.png')
         self.running = True
-        self.screen = pygame.display.set_mode((1079,650))
+        
     
     
     def park_in_left_side(self,car):
@@ -126,9 +127,8 @@ class Screen(threading.Thread):
                     car.carY = 380        
             
             if car.state==State.PARKED:
-                #car.carY=380
                 
-                if car.carX>500:
+                if car.car_direction==Direction.RIGHT:
                     self.park_in_right_side(car)
                 
                 else:
