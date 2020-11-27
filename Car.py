@@ -1,13 +1,15 @@
 # coding: utf-8
 import threading,time
 from Enum import *
-from Ponte import Bridge
+from Bridge import Bridge
 
-import ManuseadorDeCarros
+import Bridge_Handler
+import pygame
+#from Bridge_Handler import *
 
-class Carro(threading.Thread):
+class Car(threading.Thread):
     def __init__(self,Id,waiting_time,crossing_time,car_direction,state=State.PARKED):
-        super(Carro,self).__init__()
+        super(Car,self).__init__()
         
         self.Id = Id
         self.waiting_time = waiting_time        #Tempo de espera
@@ -17,9 +19,27 @@ class Carro(threading.Thread):
         
         self.waited_time=0
         self.time_crossing=0
+        self.crossing_percentage=0.0
+        
+        self.flip_car=0
+        
+        if self.car_direction==Direction.RIGHT:
+            self.car_image_file=str(self.Id)+".png"
+            self.carX=980
+            self.carY=380
+            
+        else:
+            self.car_image_file=str(self.Id)+"f.png"
+            self.carX=10
+            self.carY=380
+            
+        self.car_image=pygame.image.load(self.car_image_file)
+        
+        #self.car_rect=self.car_image.get_rect()
     
     def print_car(self):
-        print("Id: " + str(self.Id) + "State: " + str(self.state) + "Direction: " + str(self.car_direction))
+        #print("Id: " + str(self.Id) + "State: " + str(self.state) + "Direction: " + str(self.car_direction))
+        pass
         
     def run(self):
         
@@ -29,34 +49,54 @@ class Carro(threading.Thread):
         self.waited_time=0.0
         self.time_crossing=0.0
 
-        try:
-            print(str(self.Id)+" "+ str(time.time()))
-            while(True):
+        print(str(self.Id)+" "+ str(time.time()))
+        while(True):
+            if(self.state == State.PARKED):                         
+                self.parked_state()
                 
-                if(self.state == State.PARKED):                         
-                    self.parked_state()
-                    
-                
-                elif(self.state == State.WAITING):
-                    self.waiting_state()
-                
-                elif(self.state == State.CROSSING):
-                    self.crossing_state()
-                    
-        except:
-            print("deu ruim")
+            elif(self.state == State.WAITING):
+                self.waiting_state()
             
-    def limit_car_speed(self):
-        pass
+            elif(self.state == State.CROSSING):
+                self.crossing_state()
+                        
+    def test_collision(self):
+        
+        for car in Bridge_Handler.Bridge_Handler.bridge_handler().list_of_cars:
+            
+            if car.state==State.CROSSING:
+                distance_crossed_1=int(980*(self.time_crossing/self.crossing_time))
+                distance_crossed_2=int(980*(car.time_crossing/car.crossing_time))
+                
+                if distance_crossed_2>distance_crossed_1:
+                    
+                    if not(distance_crossed_2-70>distance_crossed_1):
+                        
+                        return False
+        return True    
+            
+    def move_car(self):
+        
+        if self.car_direction==Direction.LEFT:
+            self.carX=int(980*(self.time_crossing/self.crossing_time))
+            
+        else:
+            self.carX=int(980-980*(self.time_crossing/self.crossing_time))
      
     def crossing_state(self):
-        
-        self.now_time = time.time()
-        self.time_crossing += self.now_time - self.before_time
-        self.before_time = self.now_time
+    
+        if self.test_collision():
+            self.move_car()
+            self.now_time = time.time()
+            self.time_crossing += self.now_time - self.before_time
+            self.before_time = self.now_time
+        else:
+            self.before_time = time.time()
+            
+            
         if(self.time_crossing >= self.crossing_time):    #trocar isso
-            print(str(self.Id)+" "+ str(time.time()))
-            #Log.doLog(ManuseadorDeCarros.manuseador().getCarros())
+            self.flip_car=1
+            #print(str(self.Id)+" "+ str(time.time()))
             self.print_car()
             Bridge.mutex.acquire()
             Bridge.car_semaphore.acquire()
@@ -67,7 +107,8 @@ class Carro(threading.Thread):
                     Bridge.number_of_cars=0
                 
                 else:  #Significa que tem fila
-                    Bridge.bridge().bridge_direction=Direction.NONE
+                    #Bridge.bridge().bridge_direction=Direction.NONE
+                    Bridge.bridge().bridge_direction=Bridge.bridge().bridge_priority
                     for i in range(Bridge.number_of_cars):
                         Bridge.bridge_semaphore.release() #Libera todos os carros que estão na fila
                     Bridge.number_of_cars=0
@@ -83,7 +124,6 @@ class Carro(threading.Thread):
     def waiting_state(self):
         
         Bridge.mutex.acquire()
-        #Log.doLog(ManuseadorDeCarros.manuseador().getCarros())
         self.print_car()
         if((Bridge.bridge().bridge_direction == Direction.NONE) or (self.car_direction != Bridge.bridge().bridge_direction)):
             if (self.car_direction != Bridge.bridge().bridge_direction and Bridge.bridge().bridge_direction != Direction.NONE):
@@ -108,7 +148,6 @@ class Carro(threading.Thread):
         self.waited_time += self.now_time - self.before_time
         self.before_time = self.now_time
         if(self.waited_time >= self.waiting_time):
-            #Log.doLog(ManuseadorDeCarros.manuseador().getCarros())
             self.print_car()
             self.state = State.WAITING
             self.waited_time = 0.0
