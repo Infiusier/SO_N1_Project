@@ -25,12 +25,12 @@ class Car(threading.Thread):
         
         if self.car_direction==Direction.RIGHT:
             self.car_image_file=str(self.Id)+".png"
-            self.carX=980
+            self.carX=BRIDGE_RIGHT_OFFSET
             self.carY=380
             
         else:
             self.car_image_file=str(self.Id)+"f.png"
-            self.carX=10
+            self.carX=BRIDGE_LEFT_OFFSET
             self.carY=380
             
         self.car_image=pygame.image.load(self.car_image_file)
@@ -69,7 +69,7 @@ class Car(threading.Thread):
                 
                 if distance_crossed_2>distance_crossed_1:
                     
-                    if not(distance_crossed_2-70>distance_crossed_1):
+                    if not(distance_crossed_2-45>distance_crossed_1):
                         
                         return False
         return True    
@@ -77,10 +77,11 @@ class Car(threading.Thread):
     def move_car(self):
         
         if self.car_direction==Direction.LEFT:
-            self.carX=int(980*(self.time_crossing/self.crossing_time))
+            print(self.carX)
+            self.carX=BRIDGE_LEFT_OFFSET+int((BRIDGE_RIGHT_OFFSET-BRIDGE_LEFT_OFFSET)*(self.time_crossing/self.crossing_time))
             
         else:
-            self.carX=int(980-980*(self.time_crossing/self.crossing_time))
+            self.carX=BRIDGE_RIGHT_OFFSET-int((BRIDGE_RIGHT_OFFSET-BRIDGE_LEFT_OFFSET)*(self.time_crossing/self.crossing_time))
      
     def crossing_state(self):
     

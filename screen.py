@@ -12,7 +12,50 @@ class Screen(threading.Thread):
         self.background = pygame.image.load('bridge.png')
         self.running = True
         
-    
+    def flip_car_image(self,car):
+        if "f" in car.car_image_file:
+            car.car_image_file=str(car.Id)+".png"
+            
+        else:
+            car.car_image_file=str(car.Id)+"f.png"
+            #print(car.car_image_file)
+            
+        car.car_image=pygame.image.load(car.car_image_file)
+        car.flip_car=0
+        
+    def update(self):
+        
+        self.screen.blit(self.background,(0,0))
+        
+        for car in Bridge_Handler.bridge_handler().list_of_cars:
+            
+            if car.flip_car==1:
+                self.flip_car_image(car)
+                
+            if car.state==State.CROSSING:
+            
+                if car.carX<=BRIDGE_LEFT_OFFSET:
+                    car.carX = BRIDGE_LEFT_OFFSET
+                    #car.carY = 380
+                    
+                if car.carX>=BRIDGE_RIGHT_OFFSET:
+                    car.carX = BRIDGE_RIGHT_OFFSET
+                    #car.carY = 380
+                    
+                car.carY=208    
+            
+            if car.state==State.PARKED:
+                self.park_car(car)
+                
+            self.screen.blit(car.car_image,(car.carX,car.carY))
+            
+            
+    def park_car(self,car):
+        if car.car_direction==Direction.RIGHT:
+            self.park_in_right_side(car)
+        
+        else:
+            self.park_in_left_side(car)
     
     def park_in_left_side(self,car):
         if car.Id==0:
@@ -95,48 +138,5 @@ class Screen(threading.Thread):
         elif car.Id==9:
             car.carX=12-80+980
             car.carY=380-50
-    
-    def flip_car_image(self,car):
-        if "f" in car.car_image_file:
-            car.car_image_file=str(car.Id)+".png"
-            
-        else:
-            car.car_image_file=str(car.Id)+"f.png"
-            print(car.car_image_file)
-            
-        car.car_image=pygame.image.load(car.car_image_file)
-        car.flip_car=0
-        
-    def update(self):
-        
-        self.screen.blit(self.background,(0,0))
-        
-        for car in Bridge_Handler.bridge_handler().list_of_cars:
-            
-            if car.flip_car==1:
-                self.flip_car_image(car)
-                
-            if car.state==State.CROSSING:
-            
-                if car.carX<=12:
-                    car.carX = 12
-                    car.carY = 380
-                    
-                if car.carX>=980:
-                    car.carX = 980
-                    car.carY = 380        
-            
-            if car.state==State.PARKED:
-                
-                if car.car_direction==Direction.RIGHT:
-                    self.park_in_right_side(car)
-                
-                else:
-                    self.park_in_left_side(car)
-                    
-            elif car.state==State.CROSSING:
-                car.carY=200
-                
-            self.screen.blit(car.car_image,(car.carX,car.carY))
                 
             
