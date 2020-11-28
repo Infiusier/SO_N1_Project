@@ -27,12 +27,12 @@ if __name__=='__main__':
     #bridge_handler.append_car_to_bridge(7, 12, esquerda)
     #bridge_handler.append_car_to_bridge(3, 20, esquerda)
     #bridge_handler.append_car_to_bridge(9, 6, esquerda)
-    #bridge_handler.append_car_to_bridge(5, 9, esquerda)
-    #bridge_handler.append_car_to_bridge(7, 12, esquerda)
-    #bridge_handler.append_car_to_bridge(3, 20, esquerda)
-    #bridge_handler.append_car_to_bridge(5, 10, esquerda)
-    bridge_handler.append_car_to_bridge(5, 10, esquerda)
-    bridge_handler.append_car_to_bridge(6, 30, esquerda)
+    bridge_handler.append_car_to_bridge(5, 30, direita)
+    bridge_handler.append_car_to_bridge(7, 15, esquerda)
+    bridge_handler.append_car_to_bridge(3, 20, direita)
+    bridge_handler.append_car_to_bridge(5, 13, esquerda)
+    bridge_handler.append_car_to_bridge(5, 35, direita)
+    bridge_handler.append_car_to_bridge(5.3, 10, esquerda)
     
     bridge_handler.begin_bridge()
     

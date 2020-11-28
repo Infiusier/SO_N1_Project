@@ -19,7 +19,7 @@ class Car(threading.Thread):
         
         self.waited_time=0
         self.time_crossing=0
-        self.crossing_percentage=0.0
+        self.in_line_state=False
         
         self.flip_car=0
         
@@ -55,17 +55,25 @@ class Car(threading.Thread):
                 
             elif(self.state == State.WAITING):
                 self.waiting_state()
+                
             
             elif(self.state == State.CROSSING):
                 self.crossing_state()  
+                
+    def in_line(self):
+        if self.in_line_state==True:
+            if ((self.carX > (BRIDGE_LEFT_OFFSET+45) and self.car_direction==Direction.LEFT) 
+            or (self.carX < (BRIDGE_RIGHT_OFFSET-45) and self.car_direction==Direction.RIGHT)):
+                Bridge.in_line_semaphore.release()
+                self.in_line_state=False
     
     def test_collision(self):
         
         for car in Bridge_Handler.Bridge_Handler.bridge_handler().list_of_cars:
             
             if car.state==State.CROSSING:
-                distance_crossed_1=int(980*(self.time_crossing/self.crossing_time))
-                distance_crossed_2=int(980*(car.time_crossing/car.crossing_time))
+                distance_crossed_1=int((BRIDGE_RIGHT_OFFSET-BRIDGE_LEFT_OFFSET)*(self.time_crossing/self.crossing_time))
+                distance_crossed_2=int((BRIDGE_RIGHT_OFFSET-BRIDGE_LEFT_OFFSET)*(car.time_crossing/car.crossing_time))
                 
                 if distance_crossed_2>distance_crossed_1:
                     
@@ -77,15 +85,18 @@ class Car(threading.Thread):
     def move_car(self):
         
         if self.car_direction==Direction.LEFT:
-            print(self.carX)
+            #print(self.carX)
             self.carX=BRIDGE_LEFT_OFFSET+int((BRIDGE_RIGHT_OFFSET-BRIDGE_LEFT_OFFSET)*(self.time_crossing/self.crossing_time))
             
         else:
             self.carX=BRIDGE_RIGHT_OFFSET-int((BRIDGE_RIGHT_OFFSET-BRIDGE_LEFT_OFFSET)*(self.time_crossing/self.crossing_time))
      
     def crossing_state(self):
+        
+        
     
         if self.test_collision():
+            self.in_line()
             self.move_car()
             self.now_time = time.time()
             self.time_crossing += self.now_time - self.before_time
@@ -136,6 +147,8 @@ class Car(threading.Thread):
         
         Bridge.car_semaphore.release()
         Bridge.mutex.release()
+        Bridge.in_line_semaphore.acquire()
+        self.in_line_state=True
         self.state = State.CROSSING    #se passou muda estado para atravessando
         self.time_crossing = 0.0 
         self.now_time = 0.0
