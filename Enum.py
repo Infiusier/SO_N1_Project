@@ -12,9 +12,9 @@ class Direction():
     
     
 class Priority():
-    NONE=0
-    DIREITA_ESQUERDA=1
-    ESQUERDA_DIREITA=2
+    RIGHT="RIGHT"
+    LEFT="LEFT"
+    NONE="NONE"
     
     
 BRIDGE_LEFT_OFFSET=220

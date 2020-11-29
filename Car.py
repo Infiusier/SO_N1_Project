@@ -35,11 +35,6 @@ class Car(threading.Thread):
             
         self.car_image=pygame.image.load(self.car_image_file)
         
-    
-    def print_car(self):
-        #print("Id: " + str(self.Id) + "State: " + str(self.state) + "Direction: " + str(self.car_direction))
-        pass
-        
     def run(self):
         
         self.now_time=0.0
@@ -48,7 +43,6 @@ class Car(threading.Thread):
         self.waited_time=0.0
         self.time_crossing=0.0
 
-        print(str(self.Id)+" "+ str(time.time()))
         while(True):
             if(self.state == State.PARKED):                         
                 self.parked_state()
@@ -61,6 +55,30 @@ class Car(threading.Thread):
                 
             elif(self.state == State.CROSSING):
                 self.crossing_state()
+    
+    def verify_priority(self):
+        if Bridge.bridge().bridge_priority != Priority.NONE:
+            if self.car_direction!=Bridge.bridge().bridge_priority:
+                Bridge.bridge_priority_semaphore.acquire()
+                Bridge.bridge_priority_semaphore.release()
+                
+            else:
+                if Bridge.bridge_priority_semaphore._value==1:
+                    Bridge.bridge_priority_semaphore.acquire()
+            
+    def free_bridge_from_priority(self):
+        if Bridge.bridge().bridge_priority != Priority.NONE:
+            if self.car_direction==Bridge.bridge().bridge_priority:
+                if Bridge.bridge().bridge_priority == Priority.RIGHT:
+                    for i in range(len(Bridge.cars_l)):
+                        print("release l")
+                        Bridge.bridge_priority_semaphore.release()
+                        
+                else:
+                    for i in range(len(Bridge.cars_r)):
+                        print("release r")
+                        Bridge.bridge_priority_semaphore.release()
+            
                 
     def in_line(self):
         self.before_time = time.time()
@@ -99,9 +117,7 @@ class Car(threading.Thread):
         return True    
             
     def move_car(self):
-        
         if self.car_direction==Direction.LEFT:
-            #print(self.carX)
             self.carX=BRIDGE_LEFT_OFFSET+int((BRIDGE_RIGHT_OFFSET-BRIDGE_LEFT_OFFSET)*(self.time_crossing/self.crossing_time))
             
         else:
@@ -109,8 +125,6 @@ class Car(threading.Thread):
      
     def crossing_state(self):
         
-        
-    
         if self.test_collision():
             self.free_next_car()
             self.move_car()
@@ -120,11 +134,8 @@ class Car(threading.Thread):
         else:
             self.before_time = time.time()
             
-            
         if(self.time_crossing >= self.crossing_time):    #trocar isso
             self.flip_car=1
-            #print(str(self.Id)+" "+ str(time.time()))
-            self.print_car()
             Bridge.mutex.acquire()
             Bridge.car_semaphore.acquire()
             if(Bridge.car_semaphore._value == 0):
@@ -141,21 +152,18 @@ class Car(threading.Thread):
                     Bridge.number_of_cars=0
                 
             Bridge.mutex.release()
-            self.flip_car_direction()#muda direcoa do carro
-            self.state = State.PARKED#muda estado
-            self.waited_time = 0.0
-            self.now_time = 0.0
+            self.free_bridge_from_priority()
+            self.flip_car_direction()
+            self.state = State.PARKED
+            self.waited_time = 0
+            self.now_time = 0
             self.before_time = time.time()  
             
             
     def waiting_state(self):
-        if self.car_direction==Direction.LEFT:  
-            Bridge.cars_l.append(self.Id)
-        else:
-            Bridge.cars_r.append(self.Id)
-            
+        self.append_car()
+        self.verify_priority()
         Bridge.mutex.acquire()
-        self.print_car()
         if((Bridge.bridge().bridge_direction == Direction.NONE) or (self.car_direction != Bridge.bridge().bridge_direction)):
             if (self.car_direction != Bridge.bridge().bridge_direction and Bridge.bridge().bridge_direction != Direction.NONE):
                 Bridge.number_of_cars+=1
@@ -168,9 +176,9 @@ class Car(threading.Thread):
         Bridge.car_semaphore.release()
         Bridge.mutex.release()
         self.in_line_state=True
-        self.state = State.IN_LINE    #se passou muda estado para atravessando
-        self.time_crossing = 0.0 
-        self.now_time = 0.0
+        self.state = State.IN_LINE
+        self.time_crossing = 0
+        self.now_time = 0
         self.before_time = time.time()
         
             
@@ -181,10 +189,14 @@ class Car(threading.Thread):
         self.waited_time += self.now_time - self.before_time
         self.before_time = self.now_time
         if(self.waited_time >= self.waiting_time):
-            self.print_car()
             self.state = State.WAITING
-            self.waited_time = 0.0
+            self.waited_time = 0
     
+    def append_car(self):
+        if self.car_direction==Direction.LEFT:  
+            Bridge.cars_l.append(self.Id)
+        else:
+            Bridge.cars_r.append(self.Id)
     
     def flip_car_direction(self):
         if(self.car_direction == Direction.RIGHT):

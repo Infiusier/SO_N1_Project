@@ -9,7 +9,7 @@ import threading,time,sys
 if __name__=='__main__':
     
     pygame.init()
-    pygame.display.set_caption("Problema da Bridge Estreita")
+    pygame.display.set_caption("Problema da Ponte Estreita")
     icon = pygame.image.load('iconbridge.png')
     pygame.display.set_icon(icon)
     
@@ -27,12 +27,12 @@ if __name__=='__main__':
     #bridge_handler.append_car_to_bridge(7, 12, esquerda)
     #bridge_handler.append_car_to_bridge(3, 20, esquerda)
     #bridge_handler.append_car_to_bridge(9, 6, esquerda)
-    bridge_handler.append_car_to_bridge(5, 30, direita)
-    bridge_handler.append_car_to_bridge(7, 15, esquerda)
-    bridge_handler.append_car_to_bridge(3, 20, direita)
-    bridge_handler.append_car_to_bridge(5, 13, esquerda)
-    bridge_handler.append_car_to_bridge(5, 35, direita)
-    bridge_handler.append_car_to_bridge(5.3, 10, esquerda)
+    bridge_handler.append_car_to_bridge(1, 35, esquerda)
+    bridge_handler.append_car_to_bridge(6, 35, esquerda)
+    bridge_handler.append_car_to_bridge(7, 35, esquerda)
+    bridge_handler.append_car_to_bridge(26, 35, esquerda)
+    bridge_handler.append_car_to_bridge(20, 35, direita)
+    bridge_handler.append_car_to_bridge(25, 35, esquerda)
     
     bridge_handler.begin_bridge()
     

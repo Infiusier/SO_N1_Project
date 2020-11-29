@@ -5,6 +5,7 @@ import threading
 
 class Bridge():
     __object = None
+    bridge_priority_semaphore=threading.Semaphore(1)
     bridge_semaphore = threading.Semaphore(1)              #Controla o acesso a bridge
     car_semaphore = threading.Semaphore(0)                    #Numero de carros na bridge
     mutex = threading.Semaphore(1)                    #Controle de regiões "criticas"
