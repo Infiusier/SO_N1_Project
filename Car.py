@@ -56,16 +56,32 @@ class Car(threading.Thread):
             elif(self.state == State.WAITING):
                 self.waiting_state()
                 
-            
+            elif self.state==State.IN_LINE:
+                self.in_line()
+                
             elif(self.state == State.CROSSING):
-                self.crossing_state()  
+                self.crossing_state()
                 
     def in_line(self):
+        self.before_time = time.time()
+        if self.car_direction==Direction.LEFT:
+            if Bridge.cars_l[0] == self.Id:
+                self.state=State.CROSSING
+        else:
+            if Bridge.cars_r[0] == self.Id:
+                self.state=State.CROSSING
+                
+    def free_next_car(self):
         if self.in_line_state==True:
             if ((self.carX > (BRIDGE_LEFT_OFFSET+45) and self.car_direction==Direction.LEFT) 
             or (self.carX < (BRIDGE_RIGHT_OFFSET-45) and self.car_direction==Direction.RIGHT)):
-                Bridge.in_line_semaphore.release()
                 self.in_line_state=False
+                #print(Bridge.cars_list)
+                if self.car_direction==Direction.LEFT:
+                    Bridge.cars_l.pop(0)
+                else:
+                    Bridge.cars_r.pop(0)
+                
     
     def test_collision(self):
         
@@ -96,7 +112,7 @@ class Car(threading.Thread):
         
     
         if self.test_collision():
-            self.in_line()
+            self.free_next_car()
             self.move_car()
             self.now_time = time.time()
             self.time_crossing += self.now_time - self.before_time
@@ -133,7 +149,11 @@ class Car(threading.Thread):
             
             
     def waiting_state(self):
-        
+        if self.car_direction==Direction.LEFT:  
+            Bridge.cars_l.append(self.Id)
+        else:
+            Bridge.cars_r.append(self.Id)
+            
         Bridge.mutex.acquire()
         self.print_car()
         if((Bridge.bridge().bridge_direction == Direction.NONE) or (self.car_direction != Bridge.bridge().bridge_direction)):
@@ -144,12 +164,11 @@ class Car(threading.Thread):
             Bridge.bridge_semaphore.acquire()
             Bridge.mutex.acquire()
             Bridge.bridge().bridge_direction=self.car_direction
-        
+    
         Bridge.car_semaphore.release()
         Bridge.mutex.release()
-        Bridge.in_line_semaphore.acquire()
         self.in_line_state=True
-        self.state = State.CROSSING    #se passou muda estado para atravessando
+        self.state = State.IN_LINE    #se passou muda estado para atravessando
         self.time_crossing = 0.0 
         self.now_time = 0.0
         self.before_time = time.time()

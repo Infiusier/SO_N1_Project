@@ -3,6 +3,7 @@ class State():
     WAITING="WAITING"
     CROSSING="CROSSING"
     DESTROYED="DESTROYED"
+    IN_LINE="IN_LINE"
     
 class Direction():
     RIGHT="RIGHT"

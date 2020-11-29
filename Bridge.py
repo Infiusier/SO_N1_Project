@@ -5,11 +5,12 @@ import threading
 
 class Bridge():
     __object = None
-    in_line_semaphore=threading.Semaphore(1)
     bridge_semaphore = threading.Semaphore(1)              #Controla o acesso a bridge
     car_semaphore = threading.Semaphore(0)                    #Numero de carros na bridge
     mutex = threading.Semaphore(1)                    #Controle de regiões "criticas"
     number_of_cars = 0                                           #Guarda o numero de carros do outro lado da bridge +1
+    cars_l=[]
+    cars_r=[]
     def __init__(self,priority):
         
         self.bridge_direction = Direction.NONE                                    #Direção da bridge
