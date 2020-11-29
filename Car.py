@@ -21,6 +21,8 @@ class Car(threading.Thread):
         self.time_crossing=0
         self.in_line_state=False
         
+        self.car_status="Carro %d: --" % self.Id
+        
         self.flip_car=0
         
         if self.car_direction==Direction.RIGHT:
@@ -44,6 +46,8 @@ class Car(threading.Thread):
         self.time_crossing=0.0
 
         while(True):
+            self.car_status="Carro %d: %s" % (self.Id,self.state)
+            
             if(self.state == State.PARKED):                         
                 self.parked_state()
                 
@@ -152,7 +156,7 @@ class Car(threading.Thread):
                     Bridge.number_of_cars=0
                 
             Bridge.mutex.release()
-            self.free_bridge_from_priority()
+            #self.free_bridge_from_priority()
             self.flip_car_direction()
             self.state = State.PARKED
             self.waited_time = 0
@@ -162,7 +166,7 @@ class Car(threading.Thread):
             
     def waiting_state(self):
         self.append_car()
-        self.verify_priority()
+        #self.verify_priority()
         Bridge.mutex.acquire()
         if((Bridge.bridge().bridge_direction == Direction.NONE) or (self.car_direction != Bridge.bridge().bridge_direction)):
             if (self.car_direction != Bridge.bridge().bridge_direction and Bridge.bridge().bridge_direction != Direction.NONE):
