@@ -41,9 +41,8 @@ if __name__=='__main__':
         start_time = time.time()
         
         screen.update()
-        mouse = pygame.mouse.get_pos()
+        #mouse = pygame.mouse.get_pos()
         
-        #Close when quit button is pressed
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 screen.running = False
@@ -149,9 +148,10 @@ if __name__=='__main__':
         screen.txt_box_ponte.w = max(90,text_ponte_in.get_width() + 10)
         
         pygame.display.update()
+        
                 
         try:
-            #print("FPS: ", 1.0 / (time.time() - start_time))
+            print("FPS: ", 1.0 / (time.time() - start_time))
             pass
         except:
             pass

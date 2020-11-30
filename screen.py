@@ -244,6 +244,7 @@ class Screen(threading.Thread):
             self.txt_erro = ''
             
     def create_car(self):
+        
         try:    
             if int(self.txt_input_espera) >= 0 and int(self.txt_input_espera) < 10000: 
                 espera = int(self.txt_input_espera)
@@ -282,6 +283,9 @@ class Screen(threading.Thread):
             self.txt_input_direcao = ''
             self.txt_erro = 'Entrada Inválida, favor escrever Leste-Oeste ou Oeste-Leste'
             direcao_carro = Direction.NONE
+            
+        if len(Bridge_Handler.bridge_handler().list_of_cars)>=10:
+            return
             
         if travessia != None and espera != None and direcao_carro != None:
             print('Travessia'+str(travessia))
