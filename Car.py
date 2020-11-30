@@ -20,6 +20,7 @@ class Car(threading.Thread):
         self.waited_time=0
         self.time_crossing=0
         self.in_line_state=False
+        self.is_running=True
         
         self.car_status="Carro %d: --" % self.Id
         
@@ -45,7 +46,7 @@ class Car(threading.Thread):
         self.waited_time=0.0
         self.time_crossing=0.0
 
-        while(True):
+        while(self.is_running):
             self.car_status="Carro %d: %s" % (self.Id,self.state)
             
             if(self.state == State.PARKED):                         

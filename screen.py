@@ -1,3 +1,5 @@
+# coding: utf-8
+
 import pygame
 import threading
 import time
@@ -19,7 +21,7 @@ class Screen(threading.Thread):
         self.txt_input_deletar = ''
         self.txt_input_ponte = ''
         self.txt_erro = ''
-        self.txt_direcao_ponte = 'Direção da Ponte: <---'   ## CASO NECESSÁRIO MUDAR DIREÇÃO INICIAL DA PONTE AQUI
+        self.txt_direcao_ponte = 'Direção da Ponte: <---'
         self.txt_instruction_travessia = 'Digite números a partir de 10'
         self.txt_instruction_espera = 'Digite números a partir de 0'
         self.txt_instruction_dir = 'Digite Leste-Oeste ou Oeste-Leste'
@@ -310,7 +312,26 @@ class Screen(threading.Thread):
         
         for car in Bridge_Handler.bridge_handler().list_of_cars:
             if car.Id==carro_deletar:
+                
+                if car.state==State.CROSSING:
+                    Bridge.mutex.acquire()
+                    Bridge.car_semaphore.acquire()
+                    if(Bridge.car_semaphore._value == 0):
+                        if (Bridge.number_of_cars == 0):   #Significa que não tem fila 
+                            Bridge.bridge().bridge_direction=Direction.NONE
+                            Bridge.bridge_semaphore.release()  #Libera a bridge pro proximo que chegar
+                            Bridge.number_of_cars=0
+                        
+                        else:  #Significa que tem fila
+                            #Bridge.bridge().bridge_direction=Direction.NONE
+                            Bridge.bridge().bridge_direction=Bridge.bridge().bridge_priority
+                            for i in range(Bridge.number_of_cars):
+                                Bridge.bridge_semaphore.release() #Libera todos os carros que estão na fila
+                            Bridge.number_of_cars=0
+                    Bridge.mutex.release()
+                
                 Bridge_Handler.bridge_handler().list_of_cars.remove(car)
+                car.is_running=False
                 
     def set_bridge_priority(self):
         if self.txt_input_ponte == 'Oeste-Leste' or self.txt_input_ponte == 'oeste-leste' or self.txt_input_ponte == 'Oeste-leste':
