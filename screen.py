@@ -312,6 +312,14 @@ class Screen(threading.Thread):
         
         for car in Bridge_Handler.bridge_handler().list_of_cars:
             if car.Id==carro_deletar:
+                try:
+                    Bridge.cars_l.remove(car.Id)
+                except:
+                    pass
+                try:
+                    Bridge.cars_r.remove(car.Id)
+                except:
+                    pass
                 
                 if car.state==State.CROSSING:
                     Bridge.mutex.acquire()
