@@ -340,10 +340,17 @@ class Screen(threading.Thread):
                             for i in range(Bridge.number_of_cars):
                                 Bridge.bridge_semaphore.release() #Libera todos os carros que estão na fila
                             Bridge.number_of_cars=0
+                            
+                    Bridge_Handler.bridge_handler().list_of_cars.remove(car)
+                    car.is_running=False
+                    
                     Bridge.mutex.release()
-                
-                Bridge_Handler.bridge_handler().list_of_cars.remove(car)
-                car.is_running=False
+                    
+                else:
+                    Bridge.mutex.acquire()
+                    Bridge_Handler.bridge_handler().list_of_cars.remove(car)
+                    car.is_running=False
+                    Bridge.mutex.release()
                 
     def set_bridge_priority(self):
         if self.txt_input_ponte == 'Oeste-Leste' or self.txt_input_ponte == 'oeste-leste' or self.txt_input_ponte == 'Oeste-leste':

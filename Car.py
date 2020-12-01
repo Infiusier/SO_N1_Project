@@ -169,6 +169,7 @@ class Car(threading.Thread):
         self.append_car()
         #self.verify_priority()
         Bridge.mutex.acquire()
+        
         if((Bridge.bridge().bridge_direction == Direction.NONE) or (self.car_direction != Bridge.bridge().bridge_direction)):
             if (self.car_direction != Bridge.bridge().bridge_direction and Bridge.bridge().bridge_direction != Direction.NONE):
                 Bridge.number_of_cars+=1

@@ -151,7 +151,7 @@ if __name__=='__main__':
         
                 
         try:
-            print("FPS: ", 1.0 / (time.time() - start_time))
+            #print("FPS: ", 1.0 / (time.time() - start_time))
             pass
         except:
             pass
