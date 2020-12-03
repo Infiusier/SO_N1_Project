@@ -7,11 +7,15 @@ class Bridge():
     __object = None
     bridge_priority_semaphore=threading.Semaphore(1)
     bridge_semaphore = threading.Semaphore(1)              #Controla o acesso a bridge
-    car_semaphore = threading.Semaphore(0)                    #Numero de carros na bridge
-    mutex = threading.Semaphore(1)                    #Controle de regiões "criticas"
-    number_of_cars = 0                                           #Guarda o numero de carros do outro lado da bridge +1
+    #car_semaphore = threading.Semaphore(0)                    #Numero de carros na bridge
+    #mutex = threading.Semaphore(1)                    
+    #number_of_cars = 0                                           #Guarda o numero de carros do outro lado da bridge +1
     cars_l=[]
     cars_r=[]
+    number_of_left=0
+    number_of_right=0
+    left_mutex=threading.Semaphore(1)
+    right_mutex=threading.Semaphore(1)
     def __init__(self,priority):
         
         self.bridge_direction = Direction.NONE                                    #Direção da bridge
