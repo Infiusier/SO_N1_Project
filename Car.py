@@ -97,8 +97,8 @@ class Car(threading.Thread):
                 
     def free_next_car(self):
         if self.in_line_state==True:
-            if ((self.carX > (BRIDGE_LEFT_OFFSET+45) and self.car_direction==Direction.LEFT) 
-            or (self.carX < (BRIDGE_RIGHT_OFFSET-45) and self.car_direction==Direction.RIGHT)):
+            if ((self.carX > (BRIDGE_LEFT_OFFSET+60) and self.car_direction==Direction.LEFT) 
+            or (self.carX < (BRIDGE_RIGHT_OFFSET-60) and self.car_direction==Direction.RIGHT)):
                 self.in_line_state=False
                 #print(Bridge.cars_list)
                 

@@ -113,7 +113,7 @@ class Screen(threading.Thread):
                     
                 car.carY=208    
             
-            elif car.state==State.PARKED or car.state==State.WAITING:
+            elif car.state==State.PARKED or car.state==State.WAITING or car.state==State.IN_LINE:
                 self.park_car(car)
                 
             status_car = self.base_font.render(car.car_status, True,(255,255,255))
