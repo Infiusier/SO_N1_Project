@@ -113,7 +113,7 @@ class Screen(threading.Thread):
                     
                 car.carY=208    
             
-            if car.state==State.PARKED:
+            elif car.state==State.PARKED or car.state==State.WAITING:
                 self.park_car(car)
                 
             status_car = self.base_font.render(car.car_status, True,(255,255,255))
@@ -325,32 +325,38 @@ class Screen(threading.Thread):
                 except:
                     pass
                 
-                if car.state==State.CROSSING:
-                    Bridge.mutex.acquire()
-                    Bridge.car_semaphore.acquire()
-                    if(Bridge.car_semaphore._value == 0):
-                        if (Bridge.number_of_cars == 0):   #Significa que não tem fila 
-                            Bridge.bridge().bridge_direction=Direction.NONE
-                            Bridge.bridge_semaphore.release()  #Libera a bridge pro proximo que chegar
-                            Bridge.number_of_cars=0
+                if car.state==State.CROSSING or car.state==State.IN_LINE:
+                    if car.car_direction==Direction.LEFT:
+                        Bridge.left_mutex.acquire()
+                        Bridge.number_of_left-=1
                         
-                        else:  #Significa que tem fila
-                            #Bridge.bridge().bridge_direction=Direction.NONE
-                            Bridge.bridge().bridge_direction=Bridge.bridge().bridge_priority
-                            for i in range(Bridge.number_of_cars):
-                                Bridge.bridge_semaphore.release() #Libera todos os carros que estão na fila
-                            Bridge.number_of_cars=0
+                        if Bridge.number_of_left==0:
+                            Bridge.bridge_semaphore.release()
                             
-                    Bridge_Handler.bridge_handler().list_of_cars.remove(car)
-                    car.is_running=False
+                        Bridge.left_mutex.release()
+                            
+                    else:
+                        Bridge.right_mutex.acquire()
+                        Bridge.number_of_right-=1
+                        
+                        if Bridge.number_of_right==0:
+                            Bridge.bridge_semaphore.release()
+                            
+                        Bridge.right_mutex.release()
                     
-                    Bridge.mutex.release()
-                    
-                else:
-                    Bridge.mutex.acquire()
-                    Bridge_Handler.bridge_handler().list_of_cars.remove(car)
-                    car.is_running=False
-                    Bridge.mutex.release()
+                elif car.state==State.WAITING:
+                    if car.car_direction==Direction.LEFT:
+                        Bridge.left_mutex.acquire()
+                        Bridge.number_of_left-=1
+                        Bridge.left_mutex.release()
+                    else :
+                        Bridge.right_mutex.acquire()
+                        Bridge.number_of_right-=1
+                        Bridge.right_mutex.release()
+                
+                
+                Bridge_Handler.bridge_handler().list_of_cars.remove(car)
+                car.is_running=False
                 
     def set_bridge_priority(self):
         if self.txt_input_ponte == 'Oeste-Leste' or self.txt_input_ponte == 'oeste-leste' or self.txt_input_ponte == 'Oeste-leste':

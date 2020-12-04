@@ -86,6 +86,7 @@ class Car(threading.Thread):
             
                 
     def in_line(self):
+        time.sleep(0.1)
         self.before_time = time.time()
         if self.car_direction==Direction.LEFT:
             if Bridge.cars_l[0] == self.Id:
@@ -100,10 +101,12 @@ class Car(threading.Thread):
             or (self.carX < (BRIDGE_RIGHT_OFFSET-45) and self.car_direction==Direction.RIGHT)):
                 self.in_line_state=False
                 #print(Bridge.cars_list)
+                
                 if self.car_direction==Direction.LEFT:
                     Bridge.cars_l.pop(0)
                 else:
                     Bridge.cars_r.pop(0)
+                
                 
     
     def test_collision(self):
@@ -131,17 +134,18 @@ class Car(threading.Thread):
     def crossing_state(self):
         
         if self.test_collision():
-            self.free_next_car()
             self.move_car()
+            self.free_next_car()
             self.now_time = time.time()
-            time.sleep(0.3)
+            time.sleep(0.01)
             self.time_crossing += self.now_time - self.before_time
             self.before_time = self.now_time
         else:
             time.sleep(0.3)
             self.before_time = time.time()
             
-        if(self.time_crossing >= self.crossing_time):    #trocar isso
+        if(self.time_crossing >= self.crossing_time):
+            self.state = State.PARKED
             '''
             self.flip_car=1
             Bridge.mutex.acquire()
@@ -171,21 +175,22 @@ class Car(threading.Thread):
             if self.car_direction==Direction.LEFT:
                 Bridge.left_mutex.acquire()
                 Bridge.number_of_left-=1
-                Bridge.left_mutex.release()
                 
                 if Bridge.number_of_left==0:
                     Bridge.bridge_semaphore.release()
+                
+                Bridge.left_mutex.release()
                     
             else:
                 Bridge.right_mutex.acquire()
                 Bridge.number_of_right-=1
-                Bridge.right_mutex.release()
                 
                 if Bridge.number_of_right==0:
                     Bridge.bridge_semaphore.release()
                     
+                Bridge.right_mutex.release()
+                    
             self.flip_car_direction()
-            self.state = State.PARKED
             self.waited_time = 0
             self.now_time = 0
             self.before_time = time.time()

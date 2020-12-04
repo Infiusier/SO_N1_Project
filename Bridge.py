@@ -7,9 +7,6 @@ class Bridge():
     __object = None
     bridge_priority_semaphore=threading.Semaphore(1)
     bridge_semaphore = threading.Semaphore(1)              #Controla o acesso a bridge
-    #car_semaphore = threading.Semaphore(0)                    #Numero de carros na bridge
-    #mutex = threading.Semaphore(1)                    
-    #number_of_cars = 0                                           #Guarda o numero de carros do outro lado da bridge +1
     cars_l=[]
     cars_r=[]
     number_of_left=0
