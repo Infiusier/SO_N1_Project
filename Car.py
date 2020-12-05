@@ -2,23 +2,21 @@
 import threading,time
 from Enum import *
 from Bridge import Bridge
-
+from PySide2 import QtCore
 import Bridge_Handler
 import pygame
-#from Bridge_Handler import *
+from gui_controller import GUI_Controller
 
-class Car(threading.Thread):
-    
-    
+class Car(threading.Thread,QtCore.QObject):
     
     def __init__(self,Id,waiting_time,crossing_time,car_direction,state=State.PARKED):
         super(Car,self).__init__()
-        
+        self.gui_controller=GUI_Controller()
         self.Id = Id
-        self.waiting_time = waiting_time        #Tempo de espera
-        self.crossing_time = crossing_time  #tempo de travessia
-        self.state = state                  #State do carro
-        self.car_direction = car_direction      #Direção do carro
+        self.waiting_time = waiting_time        
+        self.crossing_time = crossing_time  
+        self.state = state                  
+        self.car_direction = car_direction      
         
         self.waited_time=0
         self.time_crossing=0
@@ -40,6 +38,9 @@ class Car(threading.Thread):
             self.carY=380
             
         self.car_image=pygame.image.load(self.car_image_file)
+        
+    def log(self,text):
+        self.gui_controller.append_to_log(text)
         
     def run(self):
         
@@ -91,10 +92,12 @@ class Car(threading.Thread):
         if self.car_direction==Direction.LEFT:
             if len(Bridge.cars_l) > 0:
                 if Bridge.cars_l[0] == self.Id:
+                    self.log("Carro %d Atravessando" % self.Id)
                     self.state=State.CROSSING
         else:
             if len(Bridge.cars_r)>0:
                 if Bridge.cars_r[0] == self.Id:
+                    self.log("Carro %d Atravessando" % self.Id)
                     self.state=State.CROSSING
                 
     def free_next_car(self):
@@ -102,15 +105,12 @@ class Car(threading.Thread):
             if ((self.carX > (BRIDGE_LEFT_OFFSET+60) and self.car_direction==Direction.LEFT) 
             or (self.carX < (BRIDGE_RIGHT_OFFSET-60) and self.car_direction==Direction.RIGHT)):
                 self.in_line_state=False
-                #print(Bridge.cars_list)
                 
                 if self.car_direction==Direction.LEFT:
                     Bridge.cars_l.pop(0)
                 else:
                     Bridge.cars_r.pop(0)
                 
-                
-    
     def test_collision(self):
         
         for car in Bridge_Handler.Bridge_Handler.bridge_handler().list_of_cars:
@@ -168,13 +168,13 @@ class Car(threading.Thread):
                     
                 Bridge.right_mutex.release()
                 
+            self.log("Carro %d Estacionado" % self.Id)
+                
             self.free_bridge_from_priority()
             self.flip_car_direction()
             self.waited_time = 0
             self.now_time = 0
             self.before_time = time.time()
-            #print(Bridge.left_mutex._value,Bridge.right_mutex._value,Bridge.bridge_semaphore._value,Bridge.number_of_left,Bridge.number_of_right)
-            
             
     def waiting_state(self):
        
@@ -190,8 +190,6 @@ class Car(threading.Thread):
             if Bridge.number_of_left==0:
                 Bridge.bridge_semaphore.acquire()
             
-            
-                
             if self.is_running==False:
                 if Bridge.number_of_right==0:
                     Bridge.bridge_semaphore.release()
@@ -224,6 +222,8 @@ class Car(threading.Thread):
             
             Bridge.right_mutex.release()
         
+        self.log("Carro %d Liberado" % self.Id)
+        
         self.time_crossing = 0
         self.now_time = 0
         self.before_time = time.time()
@@ -235,6 +235,7 @@ class Car(threading.Thread):
         self.waited_time += self.now_time - self.before_time
         self.before_time = self.now_time
         if(self.waited_time >= self.waiting_time):
+            self.log("Carro %d Aguardando liberação" % self.Id)
             self.state = State.WAITING
             self.waited_time = 0
     
@@ -245,6 +246,9 @@ class Car(threading.Thread):
             Bridge.cars_r.append(self.Id)
     
     def flip_car_direction(self):
+        
+        self.log("Carro %d mudou de Direção" % self.Id)
+        
         if(self.car_direction == Direction.RIGHT):
             self.car_direction = Direction.LEFT
         

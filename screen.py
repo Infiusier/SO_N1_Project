@@ -1,15 +1,14 @@
 # coding: utf-8
-
-import pygame
-import threading
-import time
-
 from Car import *
 from Bridge_Handler import *
 
-class Screen(threading.Thread):
+class Screen():
+    
     def __init__(self):
         super(Screen,self).__init__()
+        
+        self.gui_controller=GUI_Controller()
+        
         self.screen = pygame.display.set_mode((1406,670))
         self.background = pygame.image.load('bridge.png')
         self.running = True
@@ -323,6 +322,8 @@ class Screen(threading.Thread):
             print('Espera:'+str(espera))
             print('Direção:'+str(direcao_carro))
             Bridge_Handler.bridge_handler().append_car_to_bridge(espera, travessia, direcao_carro)
+            self.gui_controller.append_to_log("Carro %d Criado" % Bridge_Handler.bridge_handler().list_of_cars[-1].Id)
+            self.gui_controller.connect_object(Bridge_Handler.bridge_handler().list_of_cars[-1])
             Bridge_Handler.bridge_handler().list_of_cars[-1].start()
             
         else:
@@ -347,6 +348,8 @@ class Screen(threading.Thread):
         
         for car in Bridge_Handler.bridge_handler().list_of_cars:
             if car.Id==carro_deletar:
+                
+                self.gui_controller.append_to_log("Carro %d Deletado" % car.Id)
                 
                 Bridge_Handler.bridge_handler().list_of_cars.remove(car)
                 car.is_running=False

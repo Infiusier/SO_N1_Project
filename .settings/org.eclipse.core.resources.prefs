@@ -1,5 +1,7 @@
 eclipse.preferences.version=1
 encoding/Bridge.py=utf-8
 encoding/Car.py=utf-8
+encoding/Log.py=utf-8
+encoding/application.py=utf-8
 encoding/main.py=utf-8
 encoding/screen.py=utf-8
