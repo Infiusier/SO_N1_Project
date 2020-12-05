@@ -312,7 +312,7 @@ class Screen():
         else:
             self.txt_input_direcao = ''
             self.txt_erro = 'Entrada Inválida, favor escrever Leste-Oeste ou Oeste-Leste'
-            direcao_carro = Direction.NONE
+            direcao_carro = None
             
         if len(Bridge_Handler.bridge_handler().list_of_cars)>=10:
             return
