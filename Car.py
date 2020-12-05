@@ -28,6 +28,7 @@ class Car(threading.Thread):
         
         self.car_status="Carro %d: --" % self.Id
         
+        
         self.flip_car=0
         
         if self.car_direction==Direction.RIGHT:

@@ -113,14 +113,43 @@ class Screen(threading.Thread):
                     
                 car.carY=208    
             
-            elif car.state==State.PARKED or car.state==State.WAITING or car.state==State.IN_LINE:
+            elif car.state==State.PARKED:
                 self.park_car(car)
                 
+            elif car.state==State.WAITING or car.state==State.IN_LINE:
+                self.car_in_line(car)
+                
             status_car = self.base_font.render(car.car_status, True,(255,255,255))
+            
+            car_crossing_time = self.font_instr.render("T: " + str(car.crossing_time), True,(255,255,255))
+            car_waiting_time = self.font_instr.render("P: " + str(car.waiting_time), True,(255,255,255))
+            
+            self.screen.blit(car_crossing_time, (car.carX+5,car.carY-4))
+            self.screen.blit(car_waiting_time, (car.carX+5,car.carY-14))
+            
             self.screen.blit(status_car, (80,465+car.Id*20))
             self.screen.blit(car.car_image,(car.carX,car.carY))
             
-            
+    
+    def car_in_line(self,car):
+        if car.car_direction==Direction.RIGHT:
+            self.car_in_line_right(car)
+        
+        else:
+            self.car_in_line_left(car)
+    
+    def car_in_line_left(self,car):
+        car_index=Bridge.cars_l.index(car.Id)
+        
+        car.carY=208 
+        car.carX=BRIDGE_LEFT_OFFSET-car_index*45-45
+    
+    def car_in_line_right(self,car):
+        car_index=Bridge.cars_r.index(car.Id)
+        
+        car.carY=208 
+        car.carX=BRIDGE_RIGHT_OFFSET+car_index*45+45
+    
     def park_car(self,car):
         if car.car_direction==Direction.RIGHT:
             self.park_in_right_side(car)

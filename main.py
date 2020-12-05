@@ -152,7 +152,7 @@ if __name__=='__main__':
         
         try:
             #print("FPS: ", 1.0 / (time.time() - start_time))
-            print(Bridge.left_mutex._value,Bridge.right_mutex._value,Bridge.bridge_semaphore._value,Bridge.number_of_left,Bridge.number_of_right)
+            #print(Bridge.left_mutex._value,Bridge.right_mutex._value,Bridge.bridge_semaphore._value,Bridge.number_of_left,Bridge.number_of_right)
             pass
         except:
             pass
