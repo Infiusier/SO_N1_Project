@@ -22,20 +22,20 @@ if __name__=='__main__':
     
     Bridge_Handler.new_handler(10)
     bridge_handler = Bridge_Handler.bridge_handler()
-    '''
-    bridge_handler.append_car_to_bridge(5, 9, direita)
-    bridge_handler.append_car_to_bridge(7, 12, direita)
+    #'''
+    bridge_handler.append_car_to_bridge(1, 13, direita)
+    bridge_handler.append_car_to_bridge(2, 12, esquerda)
     bridge_handler.append_car_to_bridge(3, 20, direita)
-    bridge_handler.append_car_to_bridge(9, 6, direita)
-    bridge_handler.append_car_to_bridge(1, 35, direita)
+    bridge_handler.append_car_to_bridge(4, 6, esquerda)
+    bridge_handler.append_car_to_bridge(5, 35, esquerda)
     bridge_handler.append_car_to_bridge(6, 35, direita)
-    bridge_handler.append_car_to_bridge(7, 35, direita)
-    bridge_handler.append_car_to_bridge(26, 35, direita)
-    bridge_handler.append_car_to_bridge(20, 35, direita)
-    bridge_handler.append_car_to_bridge(25, 35, direita)
+    bridge_handler.append_car_to_bridge(7, 35, esquerda)
+    bridge_handler.append_car_to_bridge(8, 35, direita)
+    bridge_handler.append_car_to_bridge(9, 35, esquerda)
+    bridge_handler.append_car_to_bridge(0, 15, direita)
     
     bridge_handler.begin_bridge()
-    '''
+    #'''
 
     while screen.running==True:
         start_time = time.time()
@@ -149,9 +149,10 @@ if __name__=='__main__':
         
         pygame.display.update()
         
-                
+        
         try:
             #print("FPS: ", 1.0 / (time.time() - start_time))
+            print(Bridge.left_mutex._value,Bridge.right_mutex._value,Bridge.bridge_semaphore._value,Bridge.number_of_left,Bridge.number_of_right)
             pass
         except:
             pass

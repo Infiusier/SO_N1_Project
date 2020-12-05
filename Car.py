@@ -8,6 +8,9 @@ import pygame
 #from Bridge_Handler import *
 
 class Car(threading.Thread):
+    
+    
+    
     def __init__(self,Id,waiting_time,crossing_time,car_direction,state=State.PARKED):
         super(Car,self).__init__()
         
@@ -21,6 +24,7 @@ class Car(threading.Thread):
         self.time_crossing=0
         self.in_line_state=False
         self.is_running=True
+        
         
         self.car_status="Carro %d: --" % self.Id
         
@@ -46,7 +50,8 @@ class Car(threading.Thread):
         self.waited_time=0.0
         self.time_crossing=0.0
 
-        while(self.is_running):
+        while(self.is_running==True):
+            
             self.car_status="Carro %d: %s" % (self.Id,self.state)
             
             if(self.state == State.PARKED):                         
@@ -60,6 +65,7 @@ class Car(threading.Thread):
                 
             elif(self.state == State.CROSSING):
                 self.crossing_state()
+                
     
     def verify_priority(self):
         if Bridge.bridge().bridge_priority != Priority.NONE:
@@ -88,12 +94,15 @@ class Car(threading.Thread):
     def in_line(self):
         time.sleep(0.1)
         self.before_time = time.time()
+        
         if self.car_direction==Direction.LEFT:
-            if Bridge.cars_l[0] == self.Id:
-                self.state=State.CROSSING
+            if len(Bridge.cars_l) > 0:
+                if Bridge.cars_l[0] == self.Id:
+                    self.state=State.CROSSING
         else:
-            if Bridge.cars_r[0] == self.Id:
-                self.state=State.CROSSING
+            if len(Bridge.cars_r)>0:
+                if Bridge.cars_r[0] == self.Id:
+                    self.state=State.CROSSING
                 
     def free_next_car(self):
         if self.in_line_state==True:
@@ -146,31 +155,7 @@ class Car(threading.Thread):
             
         if(self.time_crossing >= self.crossing_time):
             self.state = State.PARKED
-            '''
-            self.flip_car=1
-            Bridge.mutex.acquire()
-            Bridge.car_semaphore.acquire()
-            if(Bridge.car_semaphore._value == 0):
-                if (Bridge.number_of_cars == 0):   #Significa que não tem fila 
-                    Bridge.bridge().bridge_direction=Direction.NONE
-                    Bridge.bridge_semaphore.release()  #Libera a bridge pro proximo que chegar
-                    Bridge.number_of_cars=0
-                
-                else:  #Significa que tem fila
-                    #Bridge.bridge().bridge_direction=Direction.NONE
-                    Bridge.bridge().bridge_direction=Bridge.bridge().bridge_priority
-                    for i in range(Bridge.number_of_cars):
-                        Bridge.bridge_semaphore.release() #Libera todos os carros que estão na fila
-                    Bridge.number_of_cars=0
-                
-            Bridge.mutex.release()
-            #self.free_bridge_from_priority()
-            self.flip_car_direction()
-            self.state = State.PARKED
-            self.waited_time = 0
-            self.now_time = 0
-            self.before_time = time.time()
-            '''
+            
             self.flip_car=1
             if self.car_direction==Direction.LEFT:
                 Bridge.left_mutex.acquire()
@@ -194,54 +179,60 @@ class Car(threading.Thread):
             self.waited_time = 0
             self.now_time = 0
             self.before_time = time.time()
+            #print(Bridge.left_mutex._value,Bridge.right_mutex._value,Bridge.bridge_semaphore._value,Bridge.number_of_left,Bridge.number_of_right)
             
             
     def waiting_state(self):
-        '''
+       
         self.append_car()
-        #self.verify_priority()
-        Bridge.mutex.acquire()
         
-        if((Bridge.bridge().bridge_direction == Direction.NONE) or (self.car_direction != Bridge.bridge().bridge_direction)):
-            if (self.car_direction != Bridge.bridge().bridge_direction and Bridge.bridge().bridge_direction != Direction.NONE):
-                Bridge.number_of_cars+=1
-            
-            Bridge.mutex.release()
-            Bridge.bridge_semaphore.acquire()
-            Bridge.mutex.acquire()
-            Bridge.bridge().bridge_direction=self.car_direction
-    
-        Bridge.car_semaphore.release()
-        Bridge.mutex.release()
-        self.in_line_state=True
-        self.state = State.IN_LINE
-        self.time_crossing = 0
-        self.now_time = 0
-        self.before_time = time.time()
-        '''
-        
-        self.append_car()
         if self.car_direction==Direction.LEFT:
             Bridge.left_mutex.acquire()
+            
+            if self.is_running==False:
+                Bridge.left_mutex.release()
+                return
+        
             if Bridge.number_of_left==0:
                 Bridge.bridge_semaphore.acquire()
                 
+            if self.is_running==False:
+                if Bridge.number_of_right==0:
+                    Bridge.bridge_semaphore.release()
+                return
+            
+            self.state=State.IN_LINE
+            
             Bridge.number_of_left+=1
+            
             Bridge.left_mutex.release()
             
         else:
             Bridge.right_mutex.acquire()
+            
+            if self.is_running==False:
+                Bridge.right_mutex.release()
+                return
+            
             if Bridge.number_of_right==0:
                 Bridge.bridge_semaphore.acquire()
                 
+            if self.is_running==False:
+                if Bridge.number_of_left==0:
+                    Bridge.bridge_semaphore.release()
+                return
+            
+            self.state=State.IN_LINE
+            
             Bridge.number_of_right+=1
+            
             Bridge.right_mutex.release()
         
         self.time_crossing = 0
         self.now_time = 0
         self.before_time = time.time()
         self.in_line_state=True
-        self.state=State.IN_LINE
+        
             
             
     def parked_state(self):

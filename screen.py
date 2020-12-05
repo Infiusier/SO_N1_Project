@@ -244,6 +244,8 @@ class Screen(threading.Thread):
             self.txt_erro = ''
             
     def create_car(self):
+        print("Valores:")
+        print(Bridge.left_mutex._value,Bridge.right_mutex._value,Bridge.bridge_semaphore._value)
         
         try:    
             if int(self.txt_input_espera) >= 0 and int(self.txt_input_espera) < 10000: 
@@ -316,14 +318,9 @@ class Screen(threading.Thread):
         
         for car in Bridge_Handler.bridge_handler().list_of_cars:
             if car.Id==carro_deletar:
-                try:
-                    Bridge.cars_l.remove(car.Id)
-                except:
-                    pass
-                try:
-                    Bridge.cars_r.remove(car.Id)
-                except:
-                    pass
+                
+                Bridge_Handler.bridge_handler().list_of_cars.remove(car)
+                car.is_running=False
                 
                 if car.state==State.CROSSING or car.state==State.IN_LINE:
                     if car.car_direction==Direction.LEFT:
@@ -345,18 +342,36 @@ class Screen(threading.Thread):
                         Bridge.right_mutex.release()
                     
                 elif car.state==State.WAITING:
+                    
+                    
                     if car.car_direction==Direction.LEFT:
-                        Bridge.left_mutex.acquire()
-                        Bridge.number_of_left-=1
-                        Bridge.left_mutex.release()
-                    else :
-                        Bridge.right_mutex.acquire()
-                        Bridge.number_of_right-=1
-                        Bridge.right_mutex.release()
+                        if Bridge.cars_l[0]==car.Id:
+                            
+                            if Bridge.left_mutex._value==0:
+                                
+                                Bridge.left_mutex.release()
+                                
+                            
+                    else:
+                        
+                        if Bridge.cars_r[0]==car.Id:
+                            if Bridge.right_mutex._value==0:
+                                
+                                Bridge.right_mutex.release()
+                        
+                           
+                try:
+                    Bridge.cars_l.remove(car.Id)
+                except:
+                    pass
+                try:
+                    Bridge.cars_r.remove(car.Id)
+                except:
+                    pass
+                        
                 
-                
-                Bridge_Handler.bridge_handler().list_of_cars.remove(car)
-                car.is_running=False
+                #print("Valores:")
+                #print(Bridge.left_mutex._value,Bridge.right_mutex._value,Bridge.bridge_semaphore._value,Bridge.number_of_left,Bridge.number_of_right)
                 
     def set_bridge_priority(self):
         if self.txt_input_ponte == 'Oeste-Leste' or self.txt_input_ponte == 'oeste-leste' or self.txt_input_ponte == 'Oeste-leste':
