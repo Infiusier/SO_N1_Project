@@ -20,19 +20,19 @@ if __name__=='__main__':
     
     Bridge.new_bridge(direita)
     
-    Bridge_Handler.new_handler(10)
+    Bridge_Handler.new_handler()
     bridge_handler = Bridge_Handler.bridge_handler()
     '''
-    bridge_handler.append_car_to_bridge(1, 13, direita)
+    bridge_handler.append_car_to_bridge(1, 13, esquerda)
     bridge_handler.append_car_to_bridge(2, 12, esquerda)
-    bridge_handler.append_car_to_bridge(3, 20, direita)
+    bridge_handler.append_car_to_bridge(3, 20, esquerda)
     bridge_handler.append_car_to_bridge(4, 6, esquerda)
     bridge_handler.append_car_to_bridge(5, 35, esquerda)
-    bridge_handler.append_car_to_bridge(6, 35, direita)
+    bridge_handler.append_car_to_bridge(6, 35, esquerda)
     bridge_handler.append_car_to_bridge(7, 35, esquerda)
-    bridge_handler.append_car_to_bridge(8, 35, direita)
+    bridge_handler.append_car_to_bridge(8, 35, esquerda)
     bridge_handler.append_car_to_bridge(9, 35, esquerda)
-    bridge_handler.append_car_to_bridge(0, 15, direita)
+    bridge_handler.append_car_to_bridge(0, 15, esquerda)
     
     bridge_handler.begin_bridge()
     '''
@@ -41,7 +41,6 @@ if __name__=='__main__':
         start_time = time.time()
         
         screen.update()
-        #mouse = pygame.mouse.get_pos()
         
         for event in pygame.event.get():
             if event.type == pygame.QUIT:

@@ -13,9 +13,7 @@ class Bridge():
     number_of_right=0
     left_mutex=threading.Semaphore(1)
     right_mutex=threading.Semaphore(1)
-    def __init__(self,priority):
-        
-        self.bridge_direction = Direction.NONE                                    
+    def __init__(self,priority):                                
         self.bridge_priority = priority                                    
         
     @staticmethod

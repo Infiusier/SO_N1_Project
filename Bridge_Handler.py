@@ -4,15 +4,13 @@ from Car import Car
 
 class Bridge_Handler():
     __object=None
-    def __init__(self,max_cars=0):
-        
-        self.max_cars=max_cars
+    def __init__(self):
         self.list_of_cars=[]
     
     @staticmethod
-    def new_handler(max_cars):
+    def new_handler():
         if(Bridge_Handler.__object==None):
-            Bridge_Handler.__object =  Bridge_Handler(max_cars)
+            Bridge_Handler.__object =  Bridge_Handler()
         
     @staticmethod
     def bridge_handler():

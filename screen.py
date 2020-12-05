@@ -10,7 +10,7 @@ from Bridge_Handler import *
 class Screen(threading.Thread):
     def __init__(self):
         super(Screen,self).__init__()
-        self.screen = pygame.display.set_mode((1079,670))
+        self.screen = pygame.display.set_mode((1406,670))
         self.background = pygame.image.load('bridge.png')
         self.running = True
         self.base_font = pygame.font.Font(None,26)
@@ -159,84 +159,84 @@ class Screen(threading.Thread):
     
     def park_in_left_side(self,car):
         if car.Id==0:
-            car.carX=12
+            car.carX=BRIDGE_LEFT_OFFSET-60
             car.carY=380
             
         elif car.Id==1:
-            car.carX=12
+            car.carX=BRIDGE_LEFT_OFFSET-60
             car.carY=380-50
             
         elif car.Id==2:
-            car.carX=12
+            car.carX=BRIDGE_LEFT_OFFSET-60
             car.carY=380-100
             
         elif car.Id==3:
-            car.carX=12+80
+            car.carX=BRIDGE_LEFT_OFFSET-60-80
             car.carY=380-300
             
         elif car.Id==4:
-            car.carX=12+80
+            car.carX=BRIDGE_LEFT_OFFSET-60-80
             car.carY=380-350
             
         elif car.Id==5:
-            car.carX=12
+            car.carX=BRIDGE_LEFT_OFFSET-60
             car.carY=380-250
             
         elif car.Id==6:
-            car.carX=12
+            car.carX=BRIDGE_LEFT_OFFSET-60
             car.carY=380-300
             
         elif car.Id==7:
-            car.carX=12
+            car.carX=BRIDGE_LEFT_OFFSET-60
             car.carY=380-350
             
         elif car.Id==8:
-            car.carX=12+80
+            car.carX=BRIDGE_LEFT_OFFSET-60-80
             car.carY=380
             
         elif car.Id==9:
-            car.carX=12+80
+            car.carX=BRIDGE_LEFT_OFFSET-60-80
             car.carY=380-50
         
     def park_in_right_side(self,car):
         if car.Id==0:
-            car.carX=12+980
+            car.carX=BRIDGE_RIGHT_OFFSET+20
             car.carY=380
             
         elif car.Id==1:
-            car.carX=12+980
+            car.carX=BRIDGE_RIGHT_OFFSET+20
             car.carY=380-50
             
         elif car.Id==2:
-            car.carX=12+980
+            car.carX=BRIDGE_RIGHT_OFFSET+20
             car.carY=380-100
             
         elif car.Id==3:
-            car.carX=12+980-80
+            car.carX=BRIDGE_RIGHT_OFFSET+20+80
             car.carY=380-300
             
         elif car.Id==4:
-            car.carX=12+980-80
+            car.carX=BRIDGE_RIGHT_OFFSET+20+80
             car.carY=380-250
             
         elif car.Id==5:
-            car.carX=12+980
+            car.carX=BRIDGE_RIGHT_OFFSET+20
             car.carY=380-250
             
         elif car.Id==6:
-            car.carX=12+980
+            car.carX=BRIDGE_RIGHT_OFFSET+20
             car.carY=380-300
             
         elif car.Id==7:
-            car.carX=12+980
+            car.carX=BRIDGE_RIGHT_OFFSET+20
             car.carY=380-350
             
         elif car.Id==8:
-            car.carX=12-80+980
+            car.carX=BRIDGE_RIGHT_OFFSET+20+80
             car.carY=380
             
         elif car.Id==9:
-            car.carX=12-80+980
+            car.carX=BRIDGE_RIGHT_OFFSET+20+80
             car.carY=380-50
             
     def verify_input_clicked(self,event):

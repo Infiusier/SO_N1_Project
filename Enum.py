@@ -8,8 +8,6 @@ class State():
 class Direction():
     RIGHT="RIGHT"
     LEFT="LEFT"
-    NONE="NONE"
-    
     
 class Priority():
     RIGHT="RIGHT"

@@ -25,9 +25,7 @@ class Car(threading.Thread):
         self.in_line_state=False
         self.is_running=True
         
-        
         self.car_status="Carro %d: --" % self.Id
-        
         
         self.flip_car=0
         
@@ -231,8 +229,6 @@ class Car(threading.Thread):
         self.before_time = time.time()
         self.in_line_state=True
         
-            
-            
     def parked_state(self):
         
         self.now_time = time.time()
