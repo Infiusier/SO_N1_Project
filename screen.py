@@ -369,6 +369,8 @@ class Screen(threading.Thread):
                             Bridge.bridge_semaphore.release()
                             
                         Bridge.right_mutex.release()
+                        
+                    car.free_bridge_from_priority()
                     
                 elif car.state==State.WAITING:
                     
@@ -387,6 +389,8 @@ class Screen(threading.Thread):
                             if Bridge.right_mutex._value==0:
                                 
                                 Bridge.right_mutex.release()
+                                
+                    car.free_bridge_from_priority()
                         
                            
                 try:
@@ -403,6 +407,8 @@ class Screen(threading.Thread):
                 #print(Bridge.left_mutex._value,Bridge.right_mutex._value,Bridge.bridge_semaphore._value,Bridge.number_of_left,Bridge.number_of_right)
                 
     def set_bridge_priority(self):
+        direcao_ponte=Bridge.bridge().bridge_priority
+        
         if self.txt_input_ponte == 'Oeste-Leste' or self.txt_input_ponte == 'oeste-leste' or self.txt_input_ponte == 'Oeste-leste':
             self.txt_input_ponte = ''
             self.txt_direcao_ponte = 'Direção da Ponte --->'
@@ -424,6 +430,11 @@ class Screen(threading.Thread):
         else:
             self.txt_input_ponte = ''
             self.txt_erro = 'Entrada Inválida, favor escrever Leste-Oeste ou Oeste-Leste'
+            
+        Bridge.bridge().bridge_priority=direcao_ponte
+        
+        for car in Bridge_Handler.bridge_handler().list_of_cars:
+            car.free_bridge_from_priority()
             
     def get_keyboard_input(self,event):
         if self.active_travessia == True:

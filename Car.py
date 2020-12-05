@@ -71,8 +71,9 @@ class Car(threading.Thread):
     def verify_priority(self):
         if Bridge.bridge().bridge_priority != Priority.NONE:
             if self.car_direction!=Bridge.bridge().bridge_priority:
-                Bridge.bridge_priority_semaphore.acquire()
-                Bridge.bridge_priority_semaphore.release()
+                if Bridge.bridge_priority_semaphore._value==0:
+                    Bridge.bridge_priority_semaphore.acquire()
+                
                 
             else:
                 if Bridge.bridge_priority_semaphore._value==1:
@@ -81,15 +82,8 @@ class Car(threading.Thread):
     def free_bridge_from_priority(self):
         if Bridge.bridge().bridge_priority != Priority.NONE:
             if self.car_direction==Bridge.bridge().bridge_priority:
-                if Bridge.bridge().bridge_priority == Priority.RIGHT:
-                    for i in range(len(Bridge.cars_l)):
-                        print("release l")
-                        Bridge.bridge_priority_semaphore.release()
-                        
-                else:
-                    for i in range(len(Bridge.cars_r)):
-                        print("release r")
-                        Bridge.bridge_priority_semaphore.release()
+                if Bridge.bridge_priority_semaphore._value==0:
+                    Bridge.bridge_priority_semaphore.release()
             
                 
     def in_line(self):
@@ -175,7 +169,8 @@ class Car(threading.Thread):
                     Bridge.bridge_semaphore.release()
                     
                 Bridge.right_mutex.release()
-                    
+                
+            self.free_bridge_from_priority()
             self.flip_car_direction()
             self.waited_time = 0
             self.now_time = 0
@@ -186,7 +181,7 @@ class Car(threading.Thread):
     def waiting_state(self):
        
         self.append_car()
-        
+        self.verify_priority()
         if self.car_direction==Direction.LEFT:
             Bridge.left_mutex.acquire()
             
@@ -196,6 +191,8 @@ class Car(threading.Thread):
         
             if Bridge.number_of_left==0:
                 Bridge.bridge_semaphore.acquire()
+            
+            
                 
             if self.is_running==False:
                 if Bridge.number_of_right==0:

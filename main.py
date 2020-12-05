@@ -22,7 +22,7 @@ if __name__=='__main__':
     
     Bridge_Handler.new_handler(10)
     bridge_handler = Bridge_Handler.bridge_handler()
-    #'''
+    '''
     bridge_handler.append_car_to_bridge(1, 13, direita)
     bridge_handler.append_car_to_bridge(2, 12, esquerda)
     bridge_handler.append_car_to_bridge(3, 20, direita)
@@ -35,7 +35,7 @@ if __name__=='__main__':
     bridge_handler.append_car_to_bridge(0, 15, direita)
     
     bridge_handler.begin_bridge()
-    #'''
+    '''
 
     while screen.running==True:
         start_time = time.time()
