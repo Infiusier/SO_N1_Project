@@ -1,8 +1,8 @@
 class State():
-    PARKED="PARKED"
-    WAITING="WAITING"
-    CROSSING="CROSSING"
-    IN_LINE="IN_LINE"
+    PARKED="Estacionado"
+    WAITING="Esperando"
+    CROSSING="Atravessando"
+    IN_LINE="Na fila"
     
 class Direction():
     RIGHT="RIGHT"
