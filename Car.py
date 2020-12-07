@@ -139,11 +139,11 @@ class Car(threading.Thread,QtCore.QObject):
             self.move_car()
             self.free_next_car()
             self.now_time = time.time()
-            time.sleep(0.01)
+            #time.sleep(0.01)
             self.time_crossing += self.now_time - self.before_time
             self.before_time = self.now_time
         else:
-            time.sleep(0.3)
+            #time.sleep(0.3)
             self.before_time = time.time()
             
         if(self.time_crossing >= self.crossing_time):
